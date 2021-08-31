@@ -1,5 +1,5 @@
 run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
-                    method = "kmeans")
+                    clustering_method = "kmeans", k, ...)
 {
   if (length(mu) != nclust) warning("Mu must have length nclust")
   Sigma <- Matrix::bdiag(lapply(1:(n/ngroups), function(i){
@@ -17,10 +17,18 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
   X <- t(MASS::mvrnorm(n = p, mu = mu_vec, n/nclust,
         Sigma = Sigma))
 
-  if (method = "kmeans")
-  {}
+  if (clustering_method == "kmeans"){
+    kmeans.out <- kmeans(X, centers = k)
+    cluster_estimate <- kmeans.out$cluster
+  }
+  if (clustering_method == "hclust")
+  {
+    dist.mat <- dist(X)
+    hclust.out <- hclust(dist.mat, ...)
+    cluster_estimate <- cutree(hclust.out, k = k)
+  }
 
-
-
+  results <- data.frame(cluster_assignment, cluster_estimate)
+  list(X = X, results = results)
 
 }
