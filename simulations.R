@@ -14,9 +14,10 @@ ngroups <- c(2, 10, 50) ## for better simulations, the number of groups should d
 rho <- c(0.2, 0.5, 0.8)
 mu_step_size <- c(0.25, 1, 4)
 clustering_method <- c("kmeans", "hclust")
-k <- c(2, 3, 4)
+#k <- c(2, 3, 4)
 
-params <- tidyr::crossing(n, p, nclust, ngroups, rho, mu_step_size, clustering_method, k)
+params <- tidyr::crossing(n, p, nclust, ngroups, rho, mu_step_size, clustering_method)
+params$k <- params$nclust ## we always guess the right number of clusters (for now)
 params$agree_prop <- rep(0, nrow(params))
 params <- as.data.frame(params)
 
