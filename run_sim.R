@@ -27,6 +27,16 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
     hclust.out <- hclust(dist.mat, ...)
     cluster_estimate <- cutree(hclust.out, k = k)
   }
+  if (clustering_method == "spectral")
+  {
+    ## a very naive implementation
+    cor.mat <- as.matrix(cor(t(X)))
+    adj <- cor.mat > 0.75
+    L <- rowSums(adj) - adj
+    vectors <- eigen(L)$vectors[,1:k]
+    cluster_estimate <- kmeans(vectors, centers = k)$cluster
+
+  }
 
   #### calculate the accuracy metric
   Assignment_mat <- model.matrix(~ cluster_assignment - 1)

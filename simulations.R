@@ -2,7 +2,7 @@ library(tibble)
 library(rslurm)
 source("run_sim.R")
 
-total_repeats <- 2
+total_repeats <- 100
 
 run_sim_helper <- function(n, p, nclust, ngroups, rho, mu_step_size, clustering_method, k)
 {
@@ -10,13 +10,13 @@ run_sim_helper <- function(n, p, nclust, ngroups, rho, mu_step_size, clustering_
   run_sim(n, p, nclust, ngroups, rho, mu, clustering_method, k)
 }
 
-n <- c(100, 1000, 5000)
-p <- c(50, 500, 1000)
+n <- c(100)
+p <- c(50,100)
 nclust <- c(2, 3, 4)
-ngroups <- c(2, 10, 50) ## for better simulations, the number of groups should depend on n
+ngroups <- c(2, 10, 50)
 rho <- c(0.2, 0.5, 0.8)
-mu_step_size <- c(0.25, 1)
-clustering_method <- c("kmeans", "hclust")
+mu_step_size <- c(1)
+clustering_method <- c("kmeans", "hclust","spectral")
 #k <- c(2, 3, 4)
 
 params <- tidyr::crossing(n, p, nclust, ngroups, rho, mu_step_size, clustering_method)
@@ -27,10 +27,11 @@ params_total <- params
 for (i in 1:(total_repeats - 1)) params_total <- rbind(params_total, params)
 
 results <- sapply(1:nrow(params_total), function(i){
-  run_sim_helper(n = params[i,"n"], p = params[i,"p"], nclust = params[i,"nclust"],
-                 ngroups = params[i,"ngroups"], rho = params[i,"rho"],
-                 mu_step_size = params[i, "mu_step_size"],
-                 clustering_method = params[i,"clustering_method"], k = params[i,"k"])$agree_prop
+  run_sim_helper(n = params_total[i,"n"], p = params_total[i,"p"], nclust = params_total[i,"nclust"],
+                 ngroups = params_total[i,"ngroups"], rho = params_total[i,"rho"],
+                 mu_step_size = params_total[i, "mu_step_size"],
+                 clustering_method = params_total[i,"clustering_method"],
+                 k = params_total[i,"k"])$agree_prop
   })
 
 save(results, file = "results.RData")
