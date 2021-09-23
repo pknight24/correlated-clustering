@@ -33,7 +33,7 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
     sim.mat <- exp(dist.mat^2 / -50) ## gaussian kernel with sigma^2 = 25 (for scaling)
     adj <- apply(sim.mat, 1, function(x){ ## this computes a graph
       adj.vec <- rep(0,n)
-      adj.vec[order(x)[1:25]] <- 1
+      adj.vec[order(x)[1:25]] <- 1 ## I keep the graph relatively dense (if its too sparse we get sparse eigenvectors later)
       return(adj.vec)
     })
     D <- diag(rowSums(adj))
