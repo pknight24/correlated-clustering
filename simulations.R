@@ -1,4 +1,5 @@
 library(tibble)
+library(dplyr)
 library(rslurm)
 source("run_sim.R")
 
@@ -34,4 +35,8 @@ results <- sapply(1:nrow(params_total), function(i){
                  k = params_total[i,"k"])$agree_prop
   })
 
-save(results, file = "results.RData")
+save(params_total, results, file = "results.RData")
+
+dat <- cbind(params_total, results)
+dat %>% group_by(clustering_method) %>%
+  summarize(ag = mean(results))
