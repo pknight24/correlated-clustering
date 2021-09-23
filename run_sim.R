@@ -29,13 +29,21 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
   }
   if (clustering_method == "spectral")
   {
-    ## a very naive implementation
-    #browser()
-    cor.mat <- as.matrix(cor(t(X)))
-    adj <- cor.mat > 0.2 #### how should we construct this graph?????
-    L <- diag(rowSums(adj)) - adj
-    vectors <- eigen(L)$vectors[,1:k]
-    cluster_estimate <- kmeans(vectors, centers = k)$cluster
+    dist.mat <- as.matrix(dist(X))
+    sim.mat <- exp(dist.mat^2 / -50) ## gaussian kernel with sigma^2 = 25 (for scaling)
+    adj <- apply(sim.mat, 1, function(x){ ## this computes a graph
+      adj.vec <- rep(0,n)
+      adj.vec[order(x)[1:25]] <- 1
+      return(adj.vec)
+    })
+    D <- diag(rowSums(adj))
+    D_half_inverse <- diag(sapply(diag(D), function(x) ifelse(x > 0, 1 / sqrt(x) , 0))
+                           )
+    L <- D - adj ## unnormalized laplacian
+    L_norm <- D_half_inverse %*% L %*% D_half_inverse
+    vectors <- eigen(L_norm)$vectors[,1:k]
+    vectors_norm <- apply(vectors, 1, function(x) ifelse(all(x == 0), x, x / (t(x) %*% x)))
+    cluster_estimate <- kmeans(vectors_norm, centers = k)$cluster
 
   }
 

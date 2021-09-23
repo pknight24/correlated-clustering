@@ -3,7 +3,7 @@ library(dplyr)
 library(rslurm)
 source("run_sim.R")
 
-total_repeats <- 100
+total_repeats <- 20
 
 run_sim_helper <- function(n, p, nclust, ngroups, rho, mu_step_size, clustering_method, k)
 {
@@ -16,7 +16,7 @@ p <- c(50,100)
 nclust <- c(2, 3, 4)
 ngroups <- c(2, 10, 50)
 rho <- c(0.2, 0.5, 0.8)
-mu_step_size <- c(1)
+mu_step_size <- c(0.25, 1)
 clustering_method <- c("kmeans", "hclust","spectral")
 #k <- c(2, 3, 4)
 
@@ -35,7 +35,7 @@ results <- sapply(1:nrow(params_total), function(i){
                  k = params_total[i,"k"])$agree_prop
   })
 
-save(params_total, results, file = "results.RData")
+## save(params_total, results, file = "results.RData")
 
 dat <- cbind(params_total, results)
 dat %>% group_by(clustering_method) %>%
