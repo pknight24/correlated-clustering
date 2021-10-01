@@ -39,5 +39,22 @@ Key points:
 
 ## Hierarchical clustering
 
+Let $D = \textrm{dist}(X)$ be the pairwise distance matrix of the $n$ samples.
+
+In agglomerative HC, we start with every observation in a singleton cluster, join clusters $G$ and $H$ together based on the following criteria:
+
+  i. $d_{SL} = \min_{i \in G, j \in H}d_{i,j}$ (single linkage)
+  ii. $d_{CL} = \max_{i \in G, j \in H}d_{i,j}$ (complete linkage)
+  iii. $d_{GA} = \frac{1}{N_GN_H}\sum_{i \in G}\sum_{j \in H}d_{i,j}$ (group average)
+
+In divisive HC, we begin with data all in one cluster and split into sub-clusters with K-means.
+
+## HC (cont.)
+
+Key points:
+
+- don't need to specify $k$ up front, can 'cut' the tree at any depth
+- relies on pairwise distances
+
 ## Spectral clustering
 
