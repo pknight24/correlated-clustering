@@ -48,16 +48,19 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
   }
 
   #### calculate the accuracy metric
+  browser()
   Assignment_mat <- model.matrix(~ cluster_assignment - 1)
-  D1 <- as.matrix(dist(Assignment_mat, method = "euclidean")) == 0 ## indicates which points have the same true assignment
+  Assignment_dist <- as.matrix(dist(Assignment_mat, method = "euclidean"))
+  true_same <- Assignment_dist == 0 ## indicates which points have the same true assignment
 
   Estimate_mat <- model.matrix(~ cluster_estimate - 1)
-  D2 <- as.matrix(dist(Estimate_mat, method = "euclidean")) == 0
+  Estimate_dist <- as.matrix(dist(Estimate_mat, method = "euclidean"))
+  estimated_same <- Estimate_dist == 0
 
-  shared <- D1 == D2 ## indicates the points that agree on both the true and estimated clusters
-  agree_prop <- mean(shared[lower.tri(shared)])
+  shared<- true_same == estimated_same ## indicates the points that agree on both the true and estimated clusters
+  ri <- mean(shared[lower.tri(shared)])
 
   results <- data.frame(cluster_assignment, cluster_estimate)
-  list(X = X, results = results, agree_prop = agree_prop)
+  list(X = X, results = results, ri = ri)
 
 }

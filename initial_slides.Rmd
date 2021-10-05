@@ -54,7 +54,94 @@ In divisive HC, we begin with data all in one cluster and split into sub-cluster
 Key points:
 
 - don't need to specify $k$ up front, can 'cut' the tree at any depth
-- relies on pairwise distances
+- relies on pairwise distances, sensitive to outliers
+- greedy algorithm
+- 'big data' issues
 
 ## Spectral clustering
+
+From our data matrix $X$, compute a similarity matrix $S \in \mathbb{R}^{n \times n}$. Then:
+
+1. Compute a similarity graph from $S$, and define $W$ to be the 'weighted' adjacency matrix
+2. Construct the Laplacian $L$ from $W$
+3. Compute $L = UDU^T$
+4. Cluster the first $k$ columns of $U$ using k-means
+
+## Spectral (cont.)
+
+Key points:
+
+- How do we construct $S$? How do we construct a graph from $S$?
+- Normalized or unnormalized Laplacian?
+- Need to specify $k$
+- Can handle non-convexity between clusters
+
+## Simulation Design
+
+Question: how robust are these methods to correlation structure between the samples in $X$?
+
+We vary the following parameters:
+
+- n = 100
+- p = 50,100
+- \# of clusters = 2, 3, 4
+- \# of groups = 2, 10, 50
+  * the 'groups' determine the block-diagonal structure of the covariance matrix
+- $\rho$ = 0.2,0.5,0.8
+  * within-group correlation
+- difference in mean between groups: 0.25,1
+  * 'signal strength'
+
+## Simulation Design (cont.)
+
+Given a set of parameters:
+
+1. Generate block-diagonal $\Sigma$ with \texttt{ngroups} blocks, set within-group correlation $\rho$
+
+```{r, eval=FALSE}
+Sigma <- Matrix::bdiag(lapply(1:(n/ngroups), function(i){
+    I <- (1-rho) * diag(ngroups)
+    ones <- rho * rep(1 ,ngroups) %*% t(rep(1, ngroups))
+    I + ones
+  }))
+```
+
+## Simulation Design (cont.)
+
+2. Generate vector of cluster assignments $\mathbf{C} = (C_1, C_2, ..., C_n)^T$ where $C_i$ may equal 1, 2, ..., $k$. Set the mean vector $\mathbf{\mu} = (\mu_{C_1}, \mu_{C_2}, ..., \mu_{C_n})^T$ where $\mu_{C_i}$ is the mean of cluster $C_i$.
+
+```{r, eval = FALSE}
+cluster_names <- LETTERS[1:nclust]
+cluster_assignment <- sample(cluster_names, 
+                             size = n, 
+                             replace = TRUE)
+mu <- (0:(nclust - 1)) * mu_step_size
+mu_vec <- rep(0, n)
+for (cl in 1:length(cluster_names)) 
+    mu_vec <- mu_vec + ifelse(cluster_assignment == 
+                                cluster_names[cl],
+                              mu[cl],
+                              0)
+```
+
+## Simulation Design (cont.)
+
+3. Draw $X \sim MVN(\mathbf{\mu}, \Sigma)$. 
+
+```{r, eval = FALSE}
+X <- t(MASS::mvrnorm(n = p, mu = mu_vec, n/nclust,
+        Sigma = Sigma))
+```
+
+4. Cluster the rows of $X$ with each method to get an estimated cluster assignment $\hat{\mathbf{C}} = (\hat{C}_1, ..., \hat{C}_n)^T$ and compare results...
+
+## Simulation Design (cont.)
+
+How do we evaluate the performance of each clustering method? Rand index: 
+
+$$RI = \frac{1}{ {n \choose 2} }\sum_{i=1}^n\sum_{j \neq i}I \left [(C_i = C_j \wedge \hat{C}_i = \hat{C}_j) \vee (C_i \neq C_j \wedge \hat{C}_i \neq \hat{C}_j) \right ]$$
+
+
+
+
 

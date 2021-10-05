@@ -32,7 +32,7 @@ results <- sapply(1:nrow(params_total), function(i){
                  ngroups = params_total[i,"ngroups"], rho = params_total[i,"rho"],
                  mu_step_size = params_total[i, "mu_step_size"],
                  clustering_method = params_total[i,"clustering_method"],
-                 k = params_total[i,"k"])$agree_prop
+                 k = params_total[i,"k"])$ri
   })
 
 save(params_total, results, file = "results.RData")
