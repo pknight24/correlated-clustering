@@ -94,7 +94,7 @@ We vary the following parameters:
 
 ## Simulation Design (cont.)
 
-Given a set of parameters:
+Given a set of parameters, repeat $R$ times:
 
 1. Generate block-diagonal $\Sigma$ with \texttt{ngroups} blocks, set within-group correlation $\rho$
 
@@ -141,7 +141,51 @@ How do we evaluate the performance of each clustering method? Rand index:
 
 $$RI = \frac{1}{ {n \choose 2} }\sum_{i=1}^n\sum_{j \neq i}I \left [(C_i = C_j \wedge \hat{C}_i = \hat{C}_j) \vee (C_i \neq C_j \wedge \hat{C}_i \neq \hat{C}_j) \right ]$$
 
+## Simulation Design (cont.)
 
+Some immediate concerns:
 
+1. We set $k$ to be the true number of clusters
+2. We assume that cluster means are equally spaced apart (signals are equally strong).
+3. Many options for spectral clustering... our method (after some trial-and-error) is:
+  - Construct $S$ with a Gaussian similarity kernel with $\sigma^2 = 25$
+  - Build an unweighted K-nearest neighbors graph with $K=25$ (relatively dense)
+  - Use a normalized Laplacian $L = I - D^{-1/2}AD^{-1/2}$
 
+## Results
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+load("results.RData")
+dat <- cbind(params_total, results)
+dat %>% group_by(clustering_method) %>%
+  summarize(average_ri = mean(results)) %>% knitr::kable()
+```
+## Results (cont.)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+dat %>% group_by(clustering_method, ngroups) %>%
+  summarize(rand_index = mean(results)) %>%
+  ggplot(mapping = aes(x = as.factor(ngroups), y = rand_index, col = clustering_method)) + 
+    geom_point(size=5) + theme_classic()
+```
+
+## Results (cont.)
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+dat %>% group_by(clustering_method, mu_step_size) %>%
+  summarize(rand_index = mean(results)) %>%
+  ggplot(mapping = aes(x = as.factor(mu_step_size), y = rand_index, col = clustering_method)) + 
+    geom_point(size=5) + theme_classic()
+```
+
+## Results (cont.)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+dat %>% group_by(clustering_method, rho) %>%
+  summarize(rand_index = mean(results)) %>%
+  ggplot(mapping = aes(x = as.factor(rho), y = rand_index, col = clustering_method)) + 
+    geom_point(size=5) + theme_classic()
+```
 
