@@ -198,3 +198,12 @@ dat %>% group_by(clustering_method, rho) %>%
 2. Explore variations of spectral clustering
 3. More clustering methods
     + Convex clustering?
+    
+## Directions (cont.)
+
+Interesting Literature:
+
+1. Kleindessner et al 2019; "Guarantees for Spectral Clustering with Fairness Constraints"
+2. Fang and Wang 2011; "Penalized cluster analysis with applications to family data"
+3. Donnat and Holmes 2019; "Convex Hierarchical Clustering for Graph-Structured Data"
+4. Gittens et al 2014; "Approximate Spectral Clustering via Randomized Sketching"
