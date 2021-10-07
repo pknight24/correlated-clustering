@@ -148,9 +148,9 @@ Some immediate concerns:
 1. We set $k$ to be the true number of clusters
 2. We assume that cluster means are equally spaced apart (signals are equally strong).
 3. Many options for spectral clustering... our method (after some trial-and-error) is:
-  - Construct $S$ with a Gaussian similarity kernel with $\sigma^2 = 25$
-  - Build an unweighted K-nearest neighbors graph with $K=25$ (relatively dense)
-  - Use a normalized Laplacian $L = I - D^{-1/2}AD^{-1/2}$
+    - Construct $S$ with a Gaussian similarity kernel with $\sigma^2 = 25$
+    - Build an unweighted K-nearest neighbors graph with $K=25$ (relatively dense)
+    - Use a normalized Laplacian $L = I - D^{-1/2}AD^{-1/2}$
 
 ## Results
 
@@ -189,3 +189,12 @@ dat %>% group_by(clustering_method, rho) %>%
     geom_point(size=5) + theme_classic()
 ```
 
+## Directions
+
+1. Improve simulations
+    + Bigger $n$ and $p$
+    + Move beyond Gaussian data
+    + More complex correlation structures
+2. Explore variations of spectral clustering
+3. More clustering methods
+    + Convex clustering?
