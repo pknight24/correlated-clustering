@@ -208,3 +208,4 @@ Interesting Literature:
 2. Fang and Wang 2011; "Penalized cluster analysis with applications to family data"
 3. Donnat and Holmes 2019; "Convex Hierarchical Clustering for Graph-Structured Data"
 4. Gittens et al 2014; "Approximate Spectral Clustering via Randomized Sketching"
+5. Joseph and Yu 2016; "Impact of Regularization on Spectral Clustering"
