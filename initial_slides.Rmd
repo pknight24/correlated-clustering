@@ -197,7 +197,8 @@ dat %>% group_by(clustering_method, rho) %>%
     + More complex correlation structures
 2. Explore variations of spectral clustering
 3. More clustering methods
-    + Convex clustering?
+    + Model-based methods
+    + Convex clustering
     
 ## Directions (cont.)
 
