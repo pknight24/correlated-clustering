@@ -60,6 +60,17 @@ Key points:
 
 ## Spectral clustering
 
+Refers to a broad class of methods, but the general idea is as follows:
+
+1. Compute spectral composition of $X$ to yield a low-rank approximation
+2. Cluster the low-rank data with a standard method (usually k-means)
+
+I'll focus on two approaches: Graph-based spectral clustering (GSC) and 'simple' spectral clustering (SSC).
+
+## Graph Spectral Clustering
+
+Described in detail by von Luxburg (2007).
+
 From our data matrix $X$, compute a similarity matrix $S \in \mathbb{R}^{n \times n}$. Then:
 
 1. Compute a similarity graph from $S$, and define $W$ to be the 'weighted' adjacency matrix
@@ -67,7 +78,7 @@ From our data matrix $X$, compute a similarity matrix $S \in \mathbb{R}^{n \time
 3. Compute $L = UDU^T$
 4. Cluster the first $k$ columns of $U$ using k-means
 
-## Spectral (cont.)
+## GSC (cont.)
 
 Key points:
 
@@ -76,6 +87,19 @@ Key points:
 - Need to specify $k$
 - Can handle non-convexity between clusters
 
+## Simple Spectral Clustering
+
+1. Compute the SVD $X = USV^T$
+2. Run k-means on the first $k$ columns of $US^{1/2}$
+
+## SSC (cont.)
+
+Key points:
+
+- Simple implementation
+- Need to specify $k$
+- Assumes clusters are convex in $\mathbb{R}^k$
+
 ## Simulation Design
 
 Question: how robust are these methods to correlation structure between the samples in $X$?
@@ -83,7 +107,7 @@ Question: how robust are these methods to correlation structure between the samp
 We vary the following parameters:
 
 - n = 100
-- p = 50,100
+- p = 50,100,200
 - \# of clusters = 2, 3, 4
 - \# of groups = 2, 10, 50
   * the 'groups' determine the block-diagonal structure of the covariance matrix
@@ -147,7 +171,7 @@ Some immediate concerns:
 
 1. We set $k$ to be the true number of clusters
 2. We assume that cluster means are equally spaced apart (signals are equally strong).
-3. Many options for spectral clustering... our method (after some trial-and-error) is:
+3. Many options for graph spectral clustering... our method (after some trial-and-error) is:
     - Construct $S$ with a Gaussian similarity kernel with $\sigma^2 = 25$
     - Build an unweighted K-nearest neighbors graph with $K=25$ (relatively dense)
     - Use a normalized Laplacian $L = I - D^{-1/2}AD^{-1/2}$
@@ -195,8 +219,7 @@ dat %>% group_by(clustering_method, rho) %>%
     + Bigger $n$ and $p$
     + Move beyond Gaussian data
     + More complex correlation structures
-2. Explore variations of spectral clustering
-3. More clustering methods
+2. More clustering methods
     + Model-based methods
     + Convex clustering
     
@@ -204,8 +227,9 @@ dat %>% group_by(clustering_method, rho) %>%
 
 Interesting Literature:
 
-1. Kleindessner et al 2019; "Guarantees for Spectral Clustering with Fairness Constraints"
-2. Fang and Wang 2011; "Penalized cluster analysis with applications to family data"
-3. Donnat and Holmes 2019; "Convex Hierarchical Clustering for Graph-Structured Data"
-4. Gittens et al 2014; "Approximate Spectral Clustering via Randomized Sketching"
-5. Joseph and Yu 2016; "Impact of Regularization on Spectral Clustering"
+- Kleindessner et al 2019; "Guarantees for Spectral Clustering with Fairness Constraints"
+- Fang and Wang 2011; "Penalized cluster analysis with applications to family data"
+- Gittens et al 2014; "Approximate Spectral Clustering via Randomized Sketching"
+- Joseph and Yu 2016; "Impact of Regularization on Spectral Clustering"
+- Loffler et al 2020; "Optimality of spectral clustering in the Gaussian Mixture Model"
+- Abbe et al 2021; "An $\ell_p$ theory of PCA and spectral clustering"

@@ -27,7 +27,7 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
     hclust.out <- hclust(dist.mat, ...)
     cluster_estimate <- cutree(hclust.out, k = k)
   }
-  if (clustering_method == "spectral")
+  if (clustering_method == "gsc")
   {
     dist.mat <- as.matrix(dist(X))
     sim.mat <- exp(dist.mat^2 / -50) ## gaussian kernel with sigma^2 = 25 (for scaling)
@@ -46,9 +46,16 @@ run_sim <- function(n = 100, p = 50, nclust = 1, ngroups = 1, rho = .5, mu = 0,
     cluster_estimate <- kmeans(vectors_norm, centers = k)$cluster
 
   }
+  if (clustering_method == "ssc")
+  {
+    svd.out <- svd(X)
+    low_rank <- svd.out$u[,1:k] %*% diag(sqrt(svd.out$d[1:k]))
+    kmeans.out <- kmeans(x = low_rank, centers = k)
+    cluster_estimate <- kmeans.out$cluster
+
+  }
 
   #### calculate the accuracy metric
-  browser()
   Assignment_mat <- model.matrix(~ cluster_assignment - 1)
   Assignment_dist <- as.matrix(dist(Assignment_mat, method = "euclidean"))
   true_same <- Assignment_dist == 0 ## indicates which points have the same true assignment

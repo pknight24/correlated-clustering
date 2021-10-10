@@ -12,12 +12,12 @@ run_sim_helper <- function(n, p, nclust, ngroups, rho, mu_step_size, clustering_
 }
 
 n <- c(100)
-p <- c(50,100)
+p <- c(50,100, 200)
 nclust <- c(2, 3, 4)
 ngroups <- c(2, 10, 50)
 rho <- c(0.2, 0.5, 0.8)
 mu_step_size <- c(0.25, 1)
-clustering_method <- c("kmeans", "hclust","spectral")
+clustering_method <- c("kmeans", "hclust","gsc", "ssc")
 #k <- c(2, 3, 4)
 
 params <- tidyr::crossing(n, p, nclust, ngroups, rho, mu_step_size, clustering_method)
@@ -36,7 +36,3 @@ results <- sapply(1:nrow(params_total), function(i){
   })
 
 save(params_total, results, file = "results.RData")
-
-dat <- cbind(params_total, results)
-dat %>% group_by(clustering_method) %>%
-  summarize(ag = mean(results))
